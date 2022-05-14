@@ -115,5 +115,14 @@ namespace TimeLibrary
         public static bool operator <(Time obj1, Time obj2) => obj1.CompareTo(obj2) < 0;
         public static bool operator >=(Time obj1, Time obj2) => obj1.CompareTo(obj2) >= 0;
         public static bool operator <=(Time obj1, Time obj2) => obj1.CompareTo(obj2) <= 0;
+
+        // Arithmetic calculations
+        public static Time operator +(Time t, TimePeriod tp) => t.Plus(tp);
+        public Time Plus(TimePeriod tp) => new Time(3600 * Hours + 60 * Minutes + Seconds + tp.TimeLength);
+        public static Time Plus(Time t, TimePeriod tp) => new Time(3600 * t.Hours + 60 * t.Minutes + t.Seconds + tp.TimeLength);
+
+        public static Time operator -(Time t, TimePeriod tp) => t.Minus(tp);
+        public Time Minus(TimePeriod tp) => new Time(3600 * Hours + 60 * Minutes + Seconds - tp.TimeLength);
+        public static Time Minus(Time t, TimePeriod tp) => new Time(3600 * t.Hours + 60 * t.Minutes + t.Seconds - tp.TimeLength);
     }
 }
