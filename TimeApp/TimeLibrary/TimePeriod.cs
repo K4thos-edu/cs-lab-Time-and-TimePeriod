@@ -8,11 +8,11 @@ namespace TimeLibrary
         public readonly long TimeLength { get; }
 
         // Constructs
-        public TimePeriod(byte hours = 0, byte minutes = 0, byte seconds = 0) : this()
+        public TimePeriod(byte hours = 0, byte minutes = 0, byte seconds = 0, short milliseconds = 0) : this()
         {
-            TimeLength = 3600 * rangeValidate(hours, 0, byte.MaxValue) + 60 * rangeValidate(minutes, 0, 59) + rangeValidate(seconds, 0, 59);
+            TimeLength = 3600000 * rangeValidate(hours, 0, byte.MaxValue) + 60000 * rangeValidate(minutes, 0, 59) + 1000 * rangeValidate(seconds, 0, 59) + rangeValidate(milliseconds, 0, 999);
         }
-        public byte rangeValidate(byte value, byte min, byte max)
+        public long rangeValidate(long value, long min, long max)
         {
             if (value < min || value > max)
             {
@@ -27,15 +27,15 @@ namespace TimeLibrary
         }
         public long getTimeLength(Time obj)
         {
-            return 3600 * obj.Hours + 60 * obj.Minutes + obj.Seconds;
+            return 3600000 * obj.Hours + 60000 * obj.Minutes + 1000 * obj.Seconds + obj.Milliseconds;
         }
 
         public TimePeriod(string str) : this()
         {
             var arr = str.Split(':');
-            if (arr.Length != 3)
+            if (arr.Length < 3 || arr.Length > 4)
             {
-                throw new ArgumentException($"TimePeriod argument {str} not using h:mm:ss format");
+                throw new ArgumentException($"TimePeriod argument {str} not using h:mm:ss or h:mm:ss:fff format");
             }
 
             for (int i = 0; i < arr.Length; i++)
@@ -47,19 +47,22 @@ namespace TimeLibrary
                 }
                 catch (FormatException)
                 {
-                    throw new ArgumentException($"TimePeriod argument {str} not using h:mm:ss format");
+                    throw new ArgumentException($"TimePeriod argument {str} not using h:mm:ss or h:mm:ss:fff format");
                 }
 
                 switch (i)
                 {
                     case 0:
-                        TimeLength += 3600 * rangeValidate(value, 0, byte.MaxValue);
+                        TimeLength += 3600000 * rangeValidate(value, 0, byte.MaxValue);
                         break;
                     case 1:
-                        TimeLength += 60 * rangeValidate(value, 0, 59);
+                        TimeLength += 60000 * rangeValidate(value, 0, 59);
+                        break;
+                    case 2:
+                        TimeLength += 1000 * rangeValidate(value, 0, 59);
                         break;
                     default:
-                        TimeLength += rangeValidate(value, 0, 59);
+                        TimeLength += rangeValidate(value, 0, 999);
                         break;
                 }
             }
@@ -67,19 +70,22 @@ namespace TimeLibrary
 
         public TimePeriod(long timeLength = 0) : this()
         {
-            var hours = (timeLength / 3600);
-            var minutes = (timeLength / 60) % 60;
-            var seconds = timeLength % 60;
-            TimeLength = 3600 * rangeValidate((byte)hours, 0, byte.MaxValue) + 60 * rangeValidate((byte)minutes, 0, 59) + rangeValidate((byte)seconds, 0, 59);
+            var hours = (timeLength / 3600000);
+            var minutes = (timeLength / 60000) % 60;
+            var seconds = (timeLength / 1000) % 60;
+            var milliseconds = (timeLength % 1000);
+
+            TimeLength = 3600000 * rangeValidate(hours, 0, byte.MaxValue) + 60000 * rangeValidate(minutes, 0, 59) + 1000 * rangeValidate(seconds, 0, 59) + rangeValidate(milliseconds, 0, 999);
         }
 
         // ToString overloading (hh:mm:ss)
         public override string ToString()
         {
-            var hours = (TimeLength / 3600);
-            var minutes = (TimeLength / 60) % 60;
-            var seconds = TimeLength % 60;
-            return $"{hours}:{minutes:D2}:{seconds:D2}";
+            var hours = (TimeLength / 3600000);
+            var minutes = (TimeLength / 60000) % 60;
+            var seconds = (TimeLength / 1000) % 60;
+            var milliseconds = (TimeLength % 1000);
+            return $"{hours}:{minutes:D2}:{seconds:D2}:{milliseconds:D3}";
         }
 
         // IEquatable<Time>

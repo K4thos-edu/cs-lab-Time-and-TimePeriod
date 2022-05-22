@@ -64,7 +64,7 @@ namespace TimeUnitTests
         [TestMethod]
         [DataRow("0:00_00")]
         [DataRow("0:00a:00")]
-        [DataRow(" 0:00:00:00")]
+        [DataRow(" 0:00:00:00:00")]
         [ExpectedException(typeof(ArgumentException))]
         public void TimePeriodConstructor_StringArgument_ArgumentException(string str)
         {
@@ -72,9 +72,9 @@ namespace TimeUnitTests
         }
 
         [TestMethod]
-        [DataRow(128, (byte)0, (byte)2, (byte)8)]
-        [DataRow(1024, (byte)0, (byte)17, (byte)4)]
-        [DataRow(16384, (byte)4, (byte)33, (byte)4)]
+        [DataRow(128000, (byte)0, (byte)2, (byte)8)]
+        [DataRow(1024000, (byte)0, (byte)17, (byte)4)]
+        [DataRow(16384000, (byte)4, (byte)33, (byte)4)]
         public void TimePeriodConstructor_TimeLengthArgument(long t, byte expectedH, byte expectedM, byte expectedS)
         {
             Assert.AreEqual(new TimePeriod(t), new TimePeriod(expectedH, expectedM, expectedS));
@@ -85,12 +85,12 @@ namespace TimeUnitTests
         #region >>> TimePeriod ToString <<<
 
         [TestMethod]
-        [DataRow("0:00:00", (byte)0, (byte)0, (byte)0)]
-        [DataRow("10:30:30", (byte)10, (byte)30, (byte)30)]
-        [DataRow("23:59:59", (byte)23, (byte)59, (byte)59)]
-        public void TimePeriod_ToString(string str, byte expectedH, byte expectedM, byte expectedS)
+        [DataRow("0:00:00:000", (byte)0, (byte)0, (byte)0, (short)0)]
+        [DataRow("10:30:30:099", (byte)10, (byte)30, (byte)30, (short)99)]
+        [DataRow("123:59:59:999", (byte)123, (byte)59, (byte)59, (short)999)]
+        public void TimePeriod_ToString(string str, byte expectedH, byte expectedM, byte expectedS, short expectedMs)
         {
-            Assert.AreEqual(str, new TimePeriod(expectedH, expectedM, expectedS).ToString());
+            Assert.AreEqual(str, new TimePeriod(expectedH, expectedM, expectedS, expectedMs).ToString());
         }
 
         #endregion
@@ -172,24 +172,23 @@ namespace TimeUnitTests
         #region >>> Time Arithmetic <<<
 
         [TestMethod]
-        [DataRow("00:00:00", "00:00:00", "00:00:00")]
-        [DataRow("01:00:00", "00:00:01", "01:00:01")]
-        [DataRow("23:50:59", "00:08:01", "23:59:00")]
+        [DataRow("00:00:00:000", "00:00:00:000", "00:00:00:000")]
+        [DataRow("01:00:00:000", "00:00:01:000", "01:00:01:000")]
+        [DataRow("23:50:59:000", "00:08:01:000", "23:59:00:000")]
         public void TimePeriod_Plus(string str1, string str2, string expectedStr)
         {
             Assert.AreEqual(new TimePeriod(expectedStr), new TimePeriod(str1) + new TimePeriod(str2));
         }
 
         [TestMethod]
-        [DataRow("00:00:00", "00:00:00", "00:00:00")]
-        [DataRow("01:00:00", "00:00:01", "00:59:59")]
-        [DataRow("23:50:59", "00:08:01", "23:42:58")]
+        [DataRow("00:00:00:000", "00:00:00:000", "00:00:00:000")]
+        [DataRow("01:00:00:000", "00:00:01:000", "00:59:59:000")]
+        [DataRow("23:50:59:000", "00:08:01:000", "23:42:58:000")]
         public void TimePeriod_Minus(string str1, string str2, string expectedStr)
         {
             Assert.AreEqual(new TimePeriod(expectedStr), new TimePeriod(str1) - new TimePeriod(str2));
         }
 
         #endregion
-
     }
 }

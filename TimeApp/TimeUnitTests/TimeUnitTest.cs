@@ -64,7 +64,7 @@ namespace TimeUnitTests
         [TestMethod]
         [DataRow("0:00_00")]
         [DataRow("0:00a:00")]
-        [DataRow(" 0:00:00:00")]
+        [DataRow(" 0:00:00:00:00")]
         [ExpectedException(typeof(ArgumentException))]
         public void TimeConstructor_StringArgument_ArgumentException(string str)
         {
@@ -72,9 +72,9 @@ namespace TimeUnitTests
         }
 
         [TestMethod]
-        [DataRow(128, (byte)0, (byte)2, (byte)8)]
-        [DataRow(1024, (byte)0, (byte)17, (byte)4)]
-        [DataRow(16384, (byte)4, (byte)33, (byte)4)]
+        [DataRow(128000, (byte)0, (byte)2, (byte)8)]
+        [DataRow(1024000, (byte)0, (byte)17, (byte)4)]
+        [DataRow(16384000, (byte)4, (byte)33, (byte)4)]
         public void TimeConstructor_TimeLengthArgument(long t, byte expectedH, byte expectedM, byte expectedS)
         {
             Assert.AreEqual(new Time(t), new Time(expectedH, expectedM, expectedS));
