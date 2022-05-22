@@ -11,6 +11,14 @@ namespace TimeLibrary
         public readonly short Milliseconds { get; }
 
         // Constructs
+
+        /// <summary>
+        /// Time construct out of individual time units
+        /// </summary>
+        /// <param name="hours">Hours time unit (0-23)</param>
+        /// <param name="minutes">Minutes time unit (0-59)</param>
+        /// <param name="seconds">Seconds time unit (0-59)</param>
+        /// <param name="milliseconds">Milliseconds time unit (0-999)</param>
         public Time(byte hours = 0, byte minutes = 0, byte seconds = 0, short milliseconds = 0) : this()
         {
             Hours = (byte)rangeValidate(hours, 0, 23);
@@ -27,6 +35,11 @@ namespace TimeLibrary
             return value;
         }
 
+        /// <summary>
+        /// Time construct out of time string
+        /// </summary>
+        /// <param name="str">String in h:mm:ss or h:mm:ss:fff format</param>
+        /// <exception cref="ArgumentException"></exception>
         public Time(string str) : this()
         {
             var arr = str.Split(':');
@@ -65,6 +78,10 @@ namespace TimeLibrary
             }
         }
 
+        /// <summary>
+        /// Time construct out of time length
+        /// </summary>
+        /// <param name="timeLength">Length of time in milliseconds</param>
         public Time(long timeLength) : this()
         {
             Hours = (byte)((timeLength / 3600000) % 24);

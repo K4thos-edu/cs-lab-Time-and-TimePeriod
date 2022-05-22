@@ -8,6 +8,14 @@ namespace TimeLibrary
         public readonly long TimeLength { get; }
 
         // Constructs
+
+        /// <summary>
+        /// TimePeriod construct out of individual time units
+        /// </summary>
+        /// <param name="hours">Hours time unit (0-255)</param>
+        /// <param name="minutes">Minutes time unit (0-59)</param>
+        /// <param name="seconds">Seconds time unit (0-59)</param>
+        /// <param name="milliseconds">Milliseconds time unit (0-999)</param>
         public TimePeriod(byte hours = 0, byte minutes = 0, byte seconds = 0, short milliseconds = 0) : this()
         {
             TimeLength = 3600000 * rangeValidate(hours, 0, byte.MaxValue) + 60000 * rangeValidate(minutes, 0, 59) + 1000 * rangeValidate(seconds, 0, 59) + rangeValidate(milliseconds, 0, 999);
@@ -21,6 +29,11 @@ namespace TimeLibrary
             return value;
         }
 
+        /// <summary>
+        /// TimePeriod construct out of difference between 2 TimePeriods
+        /// </summary>
+        /// <param name="obj1">TimePeriod 1</param>
+        /// <param name="obj2">TimePeriod 2</param>
         public TimePeriod(Time obj1, Time obj2) : this()
         {
             TimeLength = getTimeLength(obj1) - getTimeLength(obj2);
@@ -30,6 +43,11 @@ namespace TimeLibrary
             return 3600000 * obj.Hours + 60000 * obj.Minutes + 1000 * obj.Seconds + obj.Milliseconds;
         }
 
+        /// <summary>
+        /// TimePeriod construct out of time string
+        /// </summary>
+        /// <param name="str">String in h:mm:ss or h:mm:ss:fff format</param>
+        /// <exception cref="ArgumentException"></exception>
         public TimePeriod(string str) : this()
         {
             var arr = str.Split(':');
@@ -68,6 +86,10 @@ namespace TimeLibrary
             }
         }
 
+        /// <summary>
+        /// Time construct out of time length
+        /// </summary>
+        /// <param name="timeLength">Length of time in milliseconds</param>
         public TimePeriod(long timeLength = 0) : this()
         {
             var hours = (timeLength / 3600000);
@@ -78,7 +100,7 @@ namespace TimeLibrary
             TimeLength = 3600000 * rangeValidate(hours, 0, byte.MaxValue) + 60000 * rangeValidate(minutes, 0, 59) + 1000 * rangeValidate(seconds, 0, 59) + rangeValidate(milliseconds, 0, 999);
         }
 
-        // ToString overloading (hh:mm:ss)
+        // ToString overloading (hh:mm:ss:fff)
         public override string ToString()
         {
             var hours = (TimeLength / 3600000);
